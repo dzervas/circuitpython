@@ -286,6 +286,9 @@ endif
 ifeq ($(CIRCUITPY_PEW),1)
 SRC_PATTERNS += _pew/%
 endif
+ifeq ($(CIRCUITPY_MATRIX),1)
+RS_SRC_MODULE += matrix
+endif
 
 # All possible sources are listed here, and are filtered by SRC_PATTERNS in SRC_COMMON_HAL
 SRC_COMMON_HAL_ALL = \
@@ -598,3 +601,11 @@ endif
 
 check-release-needs-clean-build:
 	@echo "RELEASE_NEEDS_CLEAN_BUILD = $(RELEASE_NEEDS_CLEAN_BUILD)"
+
+# Handle Rust idiosyncrasies
+RUSTFLAGS = \
+	--emit obj \
+	-C default-linker-libraries=no \
+	-C extra-filename=-cp
+CARGOFLAGS = \
+	-v

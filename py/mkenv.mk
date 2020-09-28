@@ -57,6 +57,7 @@ RSYNC = rsync
 SED = sed
 
 AS = $(CROSS_COMPILE)as
+CARGO = cargo
 CC = $(CROSS_COMPILE)gcc
 CXX = $(CROSS_COMPILE)g++
 LD = $(CROSS_COMPILE)ld

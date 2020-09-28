@@ -1,0 +1,11 @@
+[package]
+name = "matrix"
+version = "0.1.0"
+authors = ["Dimitris Zervas <dzervas@noc.grnet.gr>"]
+edition = "2018"
+
+[lib]
+name = "matrix"
+crate-type = ["staticlib"]
+
+[dependencies]

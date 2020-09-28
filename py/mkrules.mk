@@ -42,6 +42,25 @@ $(Q)$(CC) $(CFLAGS) -c -MD -o $@ $<
   $(RM) -f $(@:.o=.d)
 endef
 
+define compile_rus
+export RUSTFLAGS="$(RUSTFLAGS)"
+CARGOFLAGS += --target=$(RUST_TARGET)
+$(STEPECHO) "CARGO $<"
+cd $< && $(CARGO) build $(CARGOFLAGS)
+@$(CP) $</target/debug/deps/$@-cp.o $(BUILD)/$@.rso
+@# The following fixes the dependency file.
+@# See http://make.paulandlesley.org/autodep.html for details.
+@# Regex adjusted from the above to play better with Windows paths, etc.
+@$(CP) $(@:.o=.d) $(@:.o=.P); \
+  $(SED) -e 's/#.*//' -e 's/^.*:  *//' -e 's/ *\\$$//' \
+      -e '/^$$/ d' -e 's/$$/ :/' < $(@:.o=.d) >> $(@:.o=.P); \
+  $(RM) -f $(@:.o=.d)
+endef
+
+vpath % . $(TOP) $(USER_C_MODULES) $(DEVICES_MODULES)
+$(BUILD)/%.rso: %
+	$(call compile_rust)
+
 vpath %.c . $(TOP) $(USER_C_MODULES) $(DEVICES_MODULES)
 $(BUILD)/%.o: %.c
 	$(call compile_c)

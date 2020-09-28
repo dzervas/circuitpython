@@ -85,3 +85,7 @@ TAGS
 ####################
 .venv
 .env
+
+# Rust
+####################
+/shared-module/*/target

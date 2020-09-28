@@ -64,6 +64,7 @@ ifneq ($(SD), )
 endif
 
 CROSS_COMPILE = arm-none-eabi-
+RUST_TARGET = thumbv7em-none-eabihf
 
 FATFS_DIR = lib/oofatfs
 
@@ -92,6 +93,7 @@ else
   OPTIMIZATION_FLAGS ?= -O2
   CFLAGS += -DNDEBUG -ggdb3
   CFLAGS += -flto -flto-partition=none
+#   CARGOFLAGS += --release
 endif
 
 # option to override compiler optimization level, set in boards/$(BOARD)/mpconfigboard.mk
@@ -222,6 +224,7 @@ SRC_SHARED_MODULE_EXPANDED = $(addprefix shared-bindings/, $(SRC_SHARED_MODULE))
                              $(addprefix shared-module/, $(SRC_SHARED_MODULE)) \
                              $(addprefix shared-module/, $(SRC_SHARED_MODULE_INTERNAL))
 
+
 # There may be duplicates between SRC_COMMON_HAL_EXPANDED and SRC_SHARED_MODULE_EXPANDED,
 # because a few modules have files both in common-hal/ and shared-modules/.
 # Doing a $(sort ...) removes duplicates as part of sorting.
@@ -237,6 +240,7 @@ OBJ += $(addprefix $(BUILD)/, $(SRC_LIBM:.c=.o))
 endif
 OBJ += $(addprefix $(BUILD)/, $(SRC_S:.s=.o))
 OBJ += $(addprefix $(BUILD)/, $(SRC_MOD:.c=.o))
+OBJ += $(addprefix $(BUILD)/, $(addprefix shared-module/, $(addsuffix .rso, $(RS_SRC_MODULE))))
 
 # nrfx uses undefined preprocessor variables quite casually, so we can't do
 # warning checks for these.  Happily, we've confined the offenders to the NRFX

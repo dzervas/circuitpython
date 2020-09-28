@@ -240,7 +240,7 @@ OBJ += $(addprefix $(BUILD)/, $(SRC_LIBM:.c=.o))
 endif
 OBJ += $(addprefix $(BUILD)/, $(SRC_S:.s=.o))
 OBJ += $(addprefix $(BUILD)/, $(SRC_MOD:.c=.o))
-OBJ += $(addprefix $(BUILD)/, $(addprefix shared-module/, $(addsuffix .rso, $(RS_SRC_MODULE))))
+OBJ += $(addprefix $(BUILD)/shared-module/, $(addsuffix .rso, $(RS_SRC_MODULE)))
 
 # nrfx uses undefined preprocessor variables quite casually, so we can't do
 # warning checks for these.  Happily, we've confined the offenders to the NRFX

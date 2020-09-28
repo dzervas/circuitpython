@@ -1,11 +1,7 @@
 #![no_std]
 
 #[no_mangle]
-pub extern "C" fn setup() {
-}
-
-#[no_mangle]
-pub extern "C" fn setup2() {
+pub extern "C" fn shared_module_matrix_example() {
 }
 
 #[panic_handler]

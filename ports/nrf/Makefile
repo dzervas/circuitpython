@@ -240,7 +240,7 @@ OBJ += $(addprefix $(BUILD)/, $(SRC_LIBM:.c=.o))
 endif
 OBJ += $(addprefix $(BUILD)/, $(SRC_S:.s=.o))
 OBJ += $(addprefix $(BUILD)/, $(SRC_MOD:.c=.o))
-OBJ += $(addprefix $(BUILD)/shared-module/, $(addsuffix .rso, $(RS_SRC_MODULE)))
+OBJ += $(addprefix $(BUILD)/shared-module/, $(addsuffix /lib.rso, $(RS_SRC_MODULE)))
 
 # nrfx uses undefined preprocessor variables quite casually, so we can't do
 # warning checks for these.  Happily, we've confined the offenders to the NRFX
@@ -260,7 +260,7 @@ all: $(BUILD)/firmware.bin $(BUILD)/firmware.uf2
 
 $(BUILD)/firmware.elf: $(OBJ) $(GENERATED_LD_FILE)
 	$(STEPECHO) "LINK $@"
-	$(Q)$(CC) -o $@ $(LDFLAGS) $(OBJ) -Wl,--start-group $(LIBS) -Wl,--end-group
+	$(Q)$(CC) -o $@ $(LDFLAGS) $(OBJ:.rso=.o) -Wl,--start-group $(LIBS) -Wl,--end-group
 	$(Q)$(SIZE) $@ | $(PYTHON3) $(TOP)/tools/build_memory_info.py $(GENERATED_LD_FILE)
 
 $(BUILD)/firmware.bin: $(BUILD)/firmware.elf

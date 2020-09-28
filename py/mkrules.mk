@@ -46,7 +46,7 @@ CARGOFLAGS += --target=$(RUST_TARGET)
 define compile_rust
 $(STEPECHO) "CARGO $< $@"
 cd $< && RUSTFLAGS="$(RUSTFLAGS)" $(CARGO) build $(CARGOFLAGS)
-@$(CP) $</target/$(RUST_TARGET)/debug/deps/$(notdir $<)-cp.o $@
+@$(CP) $</target/$(RUST_TARGET)/debug/deps/$(notdir $<)-cp.o $(@:.rso=.o)
 @# The following fixes the dependency file.
 @# See http://make.paulandlesley.org/autodep.html for details.
 @# Regex adjusted from the above to play better with Windows paths, etc.
@@ -55,8 +55,11 @@ cd $< && RUSTFLAGS="$(RUSTFLAGS)" $(CARGO) build $(CARGOFLAGS)
 	-e '/^$$/ d' -e 's/$$/ :/' < $</target/$(RUST_TARGET)/debug/deps/$(notdir $<)-cp.d >> $(@:.rso=.P);
 endef
 
+# .rso is used here instead of .o to differentiate the compilation process
+# of Rust source code. Bad hack, but not much. Hopefully a proper segmentation
+# of C and Rust code will take place at some point
 vpath % . $(TOP) $(USER_C_MODULES) $(DEVICES_MODULES)
-$(BUILD)/%.rso: %
+$(BUILD)/%/lib.rso: %
 	$(call compile_rust)
 
 vpath %.c . $(TOP) $(USER_C_MODULES) $(DEVICES_MODULES)

@@ -320,11 +320,6 @@ $(HEADER_BUILD)/moduledefs.h: $(SRC_QSTR) $(QSTR_GLOBAL_DEPENDENCIES) | $(HEADER
 	@$(STEPECHO) "GEN $@"
 	$(Q)$(PYTHON3) $(PY_SRC)/makemoduledefs.py --vpath="., $(TOP), $(USER_C_MODULES)" $(SRC_QSTR) > $@
 
-$(HEADER_BUILD)/runtime.rs:
-	@$(STEPECHO) "GEN $@"
-	# export RUSTFLAGS=$(RUSTFLAGS)
-	bindgen -o $@ --generate types --whitelist-type "mp_.*_t" $(TOP)/py/runtime.h -- $(INC) $(filter -D%, $(CFLAGS)) --target=$(RUST_TARGET) -mfloat-abi=soft --sysroot=$$($(CC) -print-sysroot)
-
 SRC_QSTR += $(HEADER_BUILD)/moduledefs.h
 
 # mpconfigport.mk is optional, but changes to it may drastically change

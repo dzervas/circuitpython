@@ -288,7 +288,6 @@ SRC_PATTERNS += _pew/%
 endif
 ifeq ($(CIRCUITPY_MATRIX),1)
 RS_SRC_MODULE += matrix
-SRC_QSTR += $(HEADER_BUILD)/runtime.rs
 endif
 
 # All possible sources are listed here, and are filtered by SRC_PATTERNS in SRC_COMMON_HAL

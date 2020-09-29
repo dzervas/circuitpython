@@ -232,6 +232,9 @@ SRC_COMMON_HAL_SHARED_MODULE_EXPANDED = $(sort $(SRC_COMMON_HAL_EXPANDED) $(SRC_
 
 SRC_S = supervisor/cpu.s
 
+OBJ += $(addprefix $(BUILD)/shared-module/, $(addsuffix /lib.o, $(RS_SRC_MODULE)))
+SRC_SHARED_MODULE_ALL += $(addsuffix /__init__.h, $(RS_SRC_MODULE))
+
 OBJ += $(PY_O) $(SUPERVISOR_O) $(addprefix $(BUILD)/, $(SRC_C:.c=.o))
 OBJ += $(addprefix $(BUILD)/, $(SRC_NRFX:.c=.o))
 OBJ += $(addprefix $(BUILD)/, $(SRC_COMMON_HAL_SHARED_MODULE_EXPANDED:.c=.o))
@@ -240,7 +243,6 @@ OBJ += $(addprefix $(BUILD)/, $(SRC_LIBM:.c=.o))
 endif
 OBJ += $(addprefix $(BUILD)/, $(SRC_S:.s=.o))
 OBJ += $(addprefix $(BUILD)/, $(SRC_MOD:.c=.o))
-OBJ += $(addprefix $(BUILD)/shared-module/, $(addsuffix /lib.rso, $(RS_SRC_MODULE)))
 
 # nrfx uses undefined preprocessor variables quite casually, so we can't do
 # warning checks for these.  Happily, we've confined the offenders to the NRFX

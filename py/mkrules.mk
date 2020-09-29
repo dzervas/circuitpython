@@ -46,21 +46,25 @@ CARGOFLAGS += --target=$(RUST_TARGET)
 define compile_rust
 $(STEPECHO) "CARGO $< $@"
 cd $< && RUSTFLAGS="$(RUSTFLAGS)" $(CARGO) build $(CARGOFLAGS)
-@$(CP) $</target/$(RUST_TARGET)/debug/deps/$(notdir $<)-cp.o $(@:.rso=.o)
+@$(CP) $</target/$(RUST_TARGET)/debug/deps/$(notdir $<)-cp.o $@
 @# The following fixes the dependency file.
 @# See http://make.paulandlesley.org/autodep.html for details.
 @# Regex adjusted from the above to play better with Windows paths, etc.
-@$(CP) $</target/$(RUST_TARGET)/debug/deps/$(notdir $<)-cp.d $(@:.rso=.P)
+@$(CP) $</target/$(RUST_TARGET)/debug/deps/$(notdir $<)-cp.d $(@:.o=.P)
 @$(SED) -e 's/#.*//' -e 's/^.*:  *//' -e 's/ *\\$$//' \
 	-e '/^$$/ d' -e 's/$$/ :/' < $</target/$(RUST_TARGET)/debug/deps/$(notdir $<)-cp.d >> $(@:.rso=.P);
 endef
 
-# .rso is used here instead of .o to differentiate the compilation process
-# of Rust source code. Bad hack, but not much. Hopefully a proper segmentation
-# of C and Rust code will take place at some point
+# Hopefully a proper segmentation of C and Rust code will take place at some point
 vpath % . $(TOP) $(USER_C_MODULES) $(DEVICES_MODULES)
-$(BUILD)/%/lib.rso: %
+$(BUILD)/%/lib.o: % #%/src/mp_runtime.rs %/src/mp_runtime.rs
+	bindgen -o $</src/mp_runtime.rs --ctypes-prefix crate::mp_basic_types --use-core --whitelist-type "mp_.*_t" $(TOP)/py/runtime.h -- $(INC) $(filter -D%, $(CFLAGS)) --target=$(RUST_TARGET) -mfloat-abi=soft --sysroot=$$($(CC) -print-sysroot)
+	bindgen -o $</src/mp_obj.rs --ctypes-prefix crate::mp_basic_types --use-core --whitelist-function "mp_obj_.*" --whitelist-type "mp_obj_.*_t" $(TOP)/py/obj.h -- $(INC) $(filter -D%, $(CFLAGS)) --target=$(RUST_TARGET) -mfloat-abi=soft --sysroot=$$($(CC) -print-sysroot)
 	$(call compile_rust)
+
+vpath % . $(TOP) $(USER_C_MODULES) $(DEVICES_MODULES)
+$(BUILD)/%/lib.h: %
+	cd $< && pwd && cbindgen -o $@
 
 vpath %.c . $(TOP) $(USER_C_MODULES) $(DEVICES_MODULES)
 $(BUILD)/%.o: %.c

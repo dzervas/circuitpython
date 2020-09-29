@@ -89,3 +89,5 @@ TAGS
 # Rust
 ####################
 /shared-module/*/target
+/shared-module/*/src/mp_runtime.rs
+/shared-module/*/src/mp_obj.rs
